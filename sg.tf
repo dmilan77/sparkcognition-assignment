@@ -1,17 +1,17 @@
-module "security_group" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 4.0"
+# module "security_group" {
+#   source  = "terraform-aws-modules/security-group/aws"
+#   version = "~> 4.0"
 
-  name        = local.name
-  description = "Security group for example usage with EC2 instance"
-  vpc_id      = module.vpc.vpc_id
+#   name        = local.name
+#   description = "Security group for example usage with EC2 instance"
+#   vpc_id      = module.vpc.vpc_id
 
-  ingress_cidr_blocks = ["0.0.0.0/0"]
-  ingress_rules       = ["all-icmp"]
-  egress_rules        = ["all-all"]
+#   ingress_cidr_blocks = ["0.0.0.0/0"]
+#   ingress_rules       = ["all-icmp"]
+#   egress_rules        = ["all-all"]
 
-  tags = local.tags_as_map
-}
+#   tags = local.tags_as_map
+# }
 
 module "alb_http_sg" {
   source  = "terraform-aws-modules/security-group/aws//modules/http-80"
@@ -22,6 +22,27 @@ module "alb_http_sg" {
   description = "Security group for ${local.name}"
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
+
+  tags = local.tags_as_map
+}
+
+module "asg_security_grp" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 4.0"
+
+  name        = local.name
+  description = "A security group"
+  vpc_id      = module.vpc.vpc_id
+
+  computed_ingress_with_source_security_group_id = [
+    {
+      rule                     = "http-80-tcp"
+      source_security_group_id = module.alb_http_sg.security_group_id
+    }
+  ]
+  number_of_computed_ingress_with_source_security_group_id = 1
+
+  egress_rules = ["all-all"]
 
   tags = local.tags_as_map
 }

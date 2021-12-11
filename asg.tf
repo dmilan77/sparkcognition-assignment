@@ -1,4 +1,20 @@
-module "asg_sg" {
+resource "aws_launch_template" "this" {
+  name_prefix   = "external-lt-${local.name}-"
+  image_id      = data.aws_ami.amazon-linux-2.id
+  instance_type = "t3.micro"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+  network_interfaces {
+    associate_public_ip_address = true
+  }
+  vpc_security_group_ids = [module.asg_security_grp.security_group_id]
+  user_data  = base64encode(local.user_data)
+  key_name = module.key_pair.key_pair_key_name
+}
+
+module "autoscaling_group" {
   source  = "terraform-aws-modules/autoscaling/aws"
   version = "~> 4.0"
   # Autoscaling group
@@ -13,7 +29,9 @@ module "asg_sg" {
   instance_type      = "t3.micro"
   capacity_rebalance = true
   user_data_base64  = base64encode(local.user_data)
-
+  target_group_arns = module.alb.target_group_arns
+  security_groups          = [module.asg_security_grp.security_group_id]
+  
 
   initial_lifecycle_hooks = [
     {
@@ -46,8 +64,11 @@ module "asg_sg" {
   }
 
   # Launch template
+  # launch_template = aws_launch_template.this.name
   create_lt              = true
   update_default_version = true
+
+  
 
   # Mixed instances
   use_mixed_instances_policy = true
@@ -61,11 +82,11 @@ module "asg_sg" {
     override = [
       {
         instance_type     = "t3a.nano"
-        weighted_capacity = "1"
+        # weighted_capacity = "1"
       },
       {
         instance_type     = "t3a.micro"
-        weighted_capacity = "1"
+        # weighted_capacity = "1"
       },
     ]
   }
