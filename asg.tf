@@ -31,6 +31,7 @@ module "autoscaling_group" {
   user_data_base64  = base64encode(local.user_data)
   target_group_arns = module.alb.target_group_arns
   security_groups          = [module.asg_security_grp.security_group_id]
+  key_name = module.key_pair.key_pair_key_name
   
 
   initial_lifecycle_hooks = [

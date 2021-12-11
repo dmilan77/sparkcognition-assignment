@@ -30,7 +30,7 @@ module "asg_security_grp" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 4.0"
 
-  name        = local.name
+  name        = "${local.name}-asg-sg"
   description = "A security group"
   vpc_id      = module.vpc.vpc_id
 
@@ -41,6 +41,8 @@ module "asg_security_grp" {
     }
   ]
   number_of_computed_ingress_with_source_security_group_id = 1
+  ingress_cidr_blocks      = ["0.0.0.0/0"]
+  ingress_rules            = ["http-80-tcp", "https-443-tcp","ssh-tcp"]
 
   egress_rules = ["all-all"]
 
