@@ -32,7 +32,19 @@ module "autoscaling_group" {
   target_group_arns = module.alb.target_group_arns
   security_groups          = [module.asg_security_grp.security_group_id]
   key_name = module.key_pair.key_pair_key_name
-  
+  block_device_mappings = [
+      {
+        # Root volume
+        device_name = "/dev/xvda"
+        no_device   = 0
+        ebs = {
+          delete_on_termination = true
+          encrypted             = true
+          volume_size           = 8
+          volume_type           = "gp2"
+        }
+      }
+    ]  
 
   initial_lifecycle_hooks = [
     {
