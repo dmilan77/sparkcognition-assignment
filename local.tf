@@ -1,6 +1,6 @@
 locals {
   name   = var.generalname
-  region = "us-east-1"
+  region = var.region
 
   user_data = <<-EOT
   #!/bin/bash
@@ -20,12 +20,12 @@ locals {
   tags = [
     {
       key                 = "Project"
-      value               = "megasecret"
+      value               = "assignment"
       propagate_at_launch = true
     },
     {
-      key                 = "foo"
-      value               = "something"
+      key                 = "Purpose"
+      value               = "test"
       propagate_at_launch = true
     },
   ]

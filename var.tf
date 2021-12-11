@@ -1,10 +1,10 @@
-variable vpcname {
+variable region {
   type        = string
   default     = ""
-  description = "name of vpc"
+  description = "name of region"
 }
 variable generalname {
   type        = string
-  default     = ""
+  default     = "sparkcognition"
   description = "general common name"
 }

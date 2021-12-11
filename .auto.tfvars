@@ -1,2 +1,2 @@
-generalname = "sparkcognition"
-vpcname    =    "sparkcognition-vpc"
+region    =    "us-east-1"
+

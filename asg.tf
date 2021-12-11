@@ -26,7 +26,7 @@ module "autoscaling_group" {
   desired_capacity    = 2
 
   image_id           = data.aws_ami.amazon-linux-2.id
-  instance_type      = "t3.micro"
+  instance_type      = "t3a.micro"
   capacity_rebalance = true
   user_data_base64  = base64encode(local.user_data)
   target_group_arns = module.alb.target_group_arns
@@ -86,20 +86,20 @@ module "autoscaling_group" {
   # Mixed instances
   use_mixed_instances_policy = true
   mixed_instances_policy = {
-    instances_distribution = {
-      on_demand_base_capacity                  = 0
-      on_demand_percentage_above_base_capacity = 10
-      spot_allocation_strategy                 = "capacity-optimized"
-    }
+    # instances_distribution = {
+    #   on_demand_base_capacity                  = 1
+    #   # on_demand_percentage_above_base_capacity = 10
+    #   # spot_allocation_strategy                 = "capacity-optimized"
+    # }
 
     override = [
       {
         instance_type     = "t3a.nano"
-        # weighted_capacity = "1"
+        weighted_capacity = "1"
       },
       {
         instance_type     = "t3a.micro"
-        # weighted_capacity = "1"
+        weighted_capacity = "2"
       },
     ]
   }
