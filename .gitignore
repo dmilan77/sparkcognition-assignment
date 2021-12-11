@@ -4,6 +4,8 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
+tfout
+tfout*
 
 # Crash log files
 crash.log
